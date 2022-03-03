@@ -33,15 +33,34 @@
 
         .cell {
             background-color: hsl(0, 0%, 100%);
-            border: .25vmin solid black;
-            
+        }
+        
+        .tile {
+            background-color: hsla(0, 0%, 100%, 0);
         }
 
+        button {
+            border: none;
+            overflow: hidden;
+            outline: none;
+            background-color: transparent;
+            background-repeat: no-repeat;
+        }
+
+
     </style>
-    <script src="game_of_life.js" defer type="module"></script>
+
 
 <body style="background-color:black">
+    <script type="text/javascript" src="game_of_life.js" defer type="module">
+
+    </script>
     <div id="game-board">
+        
+        <div id="cell"></div>
+        <div id="cell"></div>
+        <div id="cell"></div>
     </div>
+
 </body>
 </html>

@@ -28,28 +28,44 @@ function drawSquare(x, y) {
     const cell = document.createElement('div')
     cell.style.gridRowStart = y
     cell.id = "" + y + x
-    console.log(cell.id)
+    //console.log(cell.id)
     cell.style.gridColumnStart = x
     cell.classList.add('cell')
+    cell.onclick = function() {removeSquare(x, y)}
     gameBoard.appendChild(cell)
+}
+
+function initBlank(array, x, y) {
+    const cell = document.createElement('div')
+    cell.style.gridRowStart = y
+    //console.log(cell.id)
+    cell.style.gridColumnStart = x
+    cell.onmousedown = (function() {addTile(array, y, x)})
+    gameBoard.appendChild(cell)
+}
+
+for (let col = 1; col < ySize; col++) {
+    for (let row = 1; row < ySize; row++) {
+        initBlank(array, col, row)
+    }
 }
 
 
 function update(array, row, col) {
-    console.log("THIS IS " + array[2][1])
-    console.log("Analyze tile at " + col + ", " + row)
+    //console.log("THIS IS " + array[2][1])
+    //console.log("Analyze tile at " + col + ", " + row)
     let numLive = 0
 
     let x = col - 1
     for (let y = row - 1; y < row + 2; y++) {
         
-        console.log("Pos at " + x + ", " + y + " is " + array[x][y])
+        //console.log("Pos at " + x + ", " + y + " is " + array[x][y])
         if (array[x][y] == 1) numLive += 1
     }
 
     x = col + 1
     for (let y = row - 1; y < row + 2; y++) {
-        console.log("Pos at " + x + ", " + y + " is " + array[x][y])
+        //console.log("Pos at " + x + ", " + y + " is " + array[x][y])
         if (array[x][y] == 1) numLive += 1
     }
 
@@ -67,19 +83,19 @@ function update(array, row, col) {
     //console.log(numDead)
 
     if (array[col][row] == 1) {
-        console.log("Cell is currently ALIVE")
+        //console.log("Cell is currently ALIVE")
         if (numLive == 2 || numLive == 3) {
-            console.log("Cell should continue living")
+            //console.log("Cell should continue living")
             return 1
         } else {
-            console.log("Cell should die")
+            //console.log("Cell should die")
             return 0
         }
     } else {
         // Cell is currently dead
-        console.log("Cell is currently DEAD with " + numLive + " neighbours")
+        //console.log("Cell is currently DEAD with " + numLive + " neighbours")
         if (numLive == 3) {
-            console.log("Cell should spawn")
+            //console.log("Cell should spawn")
             return 1
         } else {
             return 0
@@ -106,6 +122,27 @@ function removeSquare(col, row) {
 
 }
 
+function myFunction() {
+    console.log("hi")
+}
+
+function addTile(array, row, col) {
+    drawSquare(col, row)
+    array[col][row] = 1
+}
+
+function toggleTile(array, row, col) {
+    console.log(array[col][row])
+    if (array[col][row] == 1) {
+        removeSquare(col, row)
+        array[col][row] = 0
+        console.log("AAAAAAA")
+    } else {
+        drawSquare(col, row)
+        array[col][row] = 1
+        console.log("bbbb")
+    }
+}
 
 function printBoard(array, previousArray) {
     for (let row = 1; row < ySize + 1; row++) {
@@ -113,9 +150,9 @@ function printBoard(array, previousArray) {
             if (array[col][row] == 1) {
                 if (previousArray[col][row] == 0) {
                     drawSquare(col, row)
-                    console.log('Drawing square')
+                    //console.log('Drawing square')
                 }
-                console.log("hi")
+                //console.log("hi")
             } else {
                 if (previousArray[col][row] == 1) removeSquare(col, row)
             }
@@ -124,26 +161,43 @@ function printBoard(array, previousArray) {
     }
 }
 
-array[2][1] = 1
-array[3][2] = 1
-array[1][3] = 1
-array[2][3] = 1
-array[3][3] = 1
+
 
 console.log("This is :" + clone[1][1])
 
 printBoard(array, clone)
-console.log("THIS IS " + array[2][1])
+//console.log("THIS IS " + array[2][1])
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 
-while (1) {
-    await sleep(200)
-    clone = step(array)
-    printBoard(array, clone)
+var running = false
+
+window.addEventListener('keydown', press => {
+
+    if (running == false) {
+        if (press.key == "a") {
+            console.log("A")
+            run()
+            running = true
+        }
+    } else {
+        console.log("Alread")
+        if (press.key == "r") {
+            console.log("Restart simulation")
+        }
+    }
+})
+
+
+async function run() {
+    while (1) {
+        await sleep(100)
+        clone = step(array)
+        printBoard(array, clone)
+    }
 }
 
 
