@@ -24,15 +24,65 @@ for (let i = 0; i < xSize + 2; i++) {
 
 console.log(array[0][0])
 
+var toggledTiles = []
+
 function drawSquare(x, y) {
     const cell = document.createElement('div')
     cell.style.gridRowStart = y
+    array[y][x] = 1
     cell.id = "" + y + x
     //console.log(cell.id)
+    console.log("Create new square at " + y + ", " + x)
     cell.style.gridColumnStart = x
     cell.classList.add('cell')
-    cell.onclick = function() {removeSquare(x, y)}
+    cell.onmousedown = (function() {mouseDown(x, y)})
+    cell.onmouseup = (function() {mouseUp(x, y)})
+    cell.onmouseover = (function() {mouseOver(x, y)})
     gameBoard.appendChild(cell)
+}
+
+
+var press = false
+
+var removeTile
+
+function mouseDown(x, y) {
+    console.log("Mouse clicked down over cell " + x + ", " + y);
+    console.log(array[y][x])
+    //toggleTile(array, y, x)
+    removeTile = array[y][x]
+    console.log(removeTile)
+    toggledTiles.push("" + y + x)
+    if (removeTile && array[y][x] == 1) {
+        console.log("Rmeo")
+        removeSquare(x, y)
+        array[y][x] = 0
+        
+    } else if (array[y][x] == 0) {
+        console.log("Draw")
+        drawSquare(x, y)
+        array[y][x] = 1
+    }
+    press = true
+}
+
+function mouseUp(x, y) {
+    console.log("Mouse clicked up over cell " + x + ", " + y);
+    toggledTiles = []
+    press = false
+}
+
+function mouseOver(x, y) {
+    if (press && !toggledTiles.includes("" + y + x)) {
+        if (removeTile && array[y][x] == 1) {
+            removeSquare(x, y)
+        } else if (array[y][x] == 0) {
+            drawSquare(x, y)
+        }
+        toggledTiles.push("" + y + x)
+        console.log("Mouse is over cell " + x + ", " + y);
+        //toggleTile(array, y, x)
+    }
 }
 
 function initBlank(array, x, y) {
@@ -40,8 +90,13 @@ function initBlank(array, x, y) {
     cell.style.gridRowStart = y
     //console.log(cell.id)
     cell.style.gridColumnStart = x
-    cell.onmousedown = (function() {addTile(array, y, x)})
+    console.log("Place blank tile at " + y + ", " + x)
+    //cell.onmousedown = (function() {addTile(array, y, x)})
+    cell.onmousedown = (function() {mouseDown(x, y)})
+    cell.onmouseup = (function() {mouseUp(x, y)})
+    cell.onmouseover = (function() {mouseOver(x, y)})
     gameBoard.appendChild(cell)
+    array[y][x] = 0
 }
 
 for (let col = 1; col < ySize; col++) {
@@ -118,8 +173,10 @@ function step(array) {
 function removeSquare(col, row) {
     let id = "" + row + col
     let myobj = document.getElementById(id);
+    array[col][row] = 0
     myobj.remove();
-
+    console.log("removing tile at " + col + ", " + row)
+    //initBlank(array, col, row)
 }
 
 function myFunction() {
@@ -133,14 +190,15 @@ function addTile(array, row, col) {
 
 function toggleTile(array, row, col) {
     console.log(array[col][row])
+    toggledTiles.push("" + row + col)
     if (array[col][row] == 1) {
         removeSquare(col, row)
         array[col][row] = 0
-        console.log("AAAAAAA")
+        //console.log("AAAAAAA")
     } else {
         drawSquare(col, row)
         array[col][row] = 1
-        console.log("bbbb")
+        //console.log("bbbb")
     }
 }
 
@@ -155,6 +213,7 @@ function printBoard(array, previousArray) {
                 //console.log("hi")
             } else {
                 if (previousArray[col][row] == 1) removeSquare(col, row)
+                array[row][col] = 0
             }
             //array[col][row] = update(array, row, col)
         }
