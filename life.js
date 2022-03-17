@@ -3,7 +3,7 @@ var nextBoard = []
 var mousePressed = false
 var removeCells = false
 var simulationRunning = false
-var restartSimulation = false
+var stopSimulation = false
 
 const xSize = 50
 const ySize = 50
@@ -37,7 +37,7 @@ function setAlive(row, column) {
     cell.onmousedown = (function() {mouseDown(row, column)})
     cell.onmouseover = (function() {mouseOver(row, column)})
     cell.onmouseup = (function() {mouseUp(row, column)})
-    cell.id = "" + row + column
+    cell.id = row + "," + column
     cell.classList.add('cell')
     gameBoard.appendChild(cell)
     currentBoard[column][row] = 1
@@ -47,7 +47,7 @@ function setAliveNotClickable(row, column) {
     const cell = document.createElement('div')
     cell.style.gridRowStart = row
     cell.style.gridColumnStart = column
-    cell.id = "" + row + column
+    cell.id = row + "," + column
     cell.classList.add('cell')
     gameBoard.appendChild(cell)
     currentBoard[column][row] = 1
@@ -61,7 +61,7 @@ function initSimulation() {
             cell.remove()
             if (currentBoard[col][row] == 1) {
                 setAliveNotClickable(row, col)
-                let id = "" + row + col
+                let id = row + "," + col
                 let cell = document.getElementById(id)
                 cell.remove()
             } 
@@ -71,7 +71,7 @@ function initSimulation() {
 
 function setDead(row, column) {
     //console.log("Set dead cell at " + row + ", " + column)
-    let id = "" + row + column
+    let id = row + "," + column
     let cell = document.getElementById(id)
     cell.remove()
     currentBoard[column][row] = 0
@@ -132,7 +132,16 @@ window.addEventListener('keydown', press => {
         run()
     } else if (press.code == 'KeyR' && simulationRunning) {
         console.log("Restart")
-        restartSimulation = true
+        stopSimulation = true
+    } else if (press.code == 'KeyP' && simulationRunning) {
+        console.log("Pause")
+        stopSimulation = true
+        simulationRunning = false
+    } else if (press.code == 'KeyP' && !simulationRunning) {
+        console.log("Unpause")
+        simulationRunning = true
+        stopSimulation = false
+        run()        
     }
 })
 
@@ -226,8 +235,8 @@ async function run() {
         clone = step(currentBoard)
         printBoard(currentBoard, clone)
         //console.log(currentBoard)
-        if (restartSimulation) {
-            console.log("Restart")
+        if (stopSimulation) {
+            console.log("Stop")
             return
         }
     }
