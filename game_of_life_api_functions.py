@@ -12,12 +12,6 @@ def insert_blueprint(blueprint_input, blueprint_name):
         print(formatted_coordinate)
         blueprint.append(formatted_coordinate)
 
-    design = {}
-    print(blueprint)
-    design["blueprint"] = blueprint
-
-    print(design)
-
     with open('game_of_life/game_of_life_database.json') as json_file:
         database = json.load(json_file)
     
@@ -25,6 +19,12 @@ def insert_blueprint(blueprint_input, blueprint_name):
 
     with open('game_of_life/game_of_life_database.json', 'w') as outfile:
         json.dump(database, outfile)
+
+def retrieve_blueprints():
+    with open('game_of_life/game_of_life_database.json') as json_file:
+        database = json.load(json_file)
+
+    return database
 
 
 def blueprint_name_exists(blueprint_name):
@@ -37,5 +37,8 @@ def blueprint_name_exists(blueprint_name):
     
     return False
 
-#insert_blueprint("5_5&3_3&9_0", "dad")
+#insert_blueprint("5_5&3_3&9_0", "mom")
 #print(blueprint_name_exists("3"))
+
+a = retrieve_blueprints()
+print(a)

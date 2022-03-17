@@ -228,7 +228,15 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+const getJSON = async url => {
+    const response = await fetch(url);
+    console.log(response)
+    return response.json(); // get JSON from the response 
+}
+
 async function run() {
+
+    getJSON("http://nickwood5.pythonanywhere.com/test/insert/1_3&1_4&3_5").then(data => console.log(data))
     while (1) {
         await sleep(100)
         //console.log("ss")
