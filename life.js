@@ -195,6 +195,7 @@ function update(array, row, col) {
     }
 }
 
+
 function step(currentBoard) {
     let clonedArray = currentBoard.map(a => {return {...a}})
     for (let row = 1; row < ySize + 1; row++) {
@@ -224,20 +225,57 @@ function printBoard(array, previousArray) {
     }
 }
 
+function formatBlueprintInput() {
+    var blueprintInput = "/" 
+    for (let col = 1; col < ySize + 1; col++) {
+        for (let row = 1; row < ySize + 1; row++) {
+            if (currentBoard[col][row] == 1) {
+                //console.log("1 at " + col + ", " + row)
+                var coordinate = col + "_" + row + "&"
+                console.log(coordinate)
+                blueprintInput += coordinate
+            }
+            //console.log(currentBoard[col][row])
+        }
+    }
+    console.log(blueprintInput)
+    return blueprintInput.slice(0, -1)
+}
+
+function saveBlueprint(name) {
+    var blueprintInput = formatBlueprintInput()
+    var url = "http://nickwood5.pythonanywhere.com/gameoflife/insert/" + name + blueprintInput
+    console.log(url)
+
+    getJSON(url).then((value) => {
+        console.log(value)
+    });
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const getJSON = async url => {
+async function getJSON(url) {
     const response = await fetch(url);
     console.log(response)
     return response.json(); // get JSON from the response 
 }
 
 async function run() {
+    var c
+    await getJSON("http://nickwood5.pythonanywhere.com/retrieve").then((value) => {
+        console.log(value)
+        c = value
+        //let c = value
+        // expected output: "Success!"
+      });
+    console.log(c)
+    saveBlueprint("nic")
 
-    getJSON("http://nickwood5.pythonanywhere.com/test/insert/1_3&1_4&3_5").then(data => console.log(data))
+
     while (1) {
+        //console.log(c)
         await sleep(100)
         //console.log("ss")
         clone = step(currentBoard)

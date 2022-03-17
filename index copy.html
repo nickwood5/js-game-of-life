@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Snake</title>
+    <title>Game of Life</title>
     <style>
         body {
         height: 100vh;
@@ -24,11 +24,22 @@
             width: 80vmin;
             height: 80vmin;
             margin-top: 10vmin;
+            margin-bottom: 10vmin;
             margin-left: auto;
-            margin-right: auto;
+            margin-right: 5vmin;
             display: grid;
             grid-template-rows: repeat(var(--numRows), 1fr);
             grid-template-columns: repeat(var(--numCols), 1fr);
+        }
+
+        #sidebar {
+            background-color: rgb(212, 209, 209);
+            width: 20vmin;
+            height: 80vmin;
+            margin-top: 10vmin;
+            margin-bottom: 10vmin;
+
+            margin-right: auto;
         }
 
         .cell {
@@ -47,6 +58,9 @@
             background-repeat: no-repeat;
         }
 
+        nav ul{height:50vmin; width:20vmin;}
+        nav ul{overflow:hidden; overflow-y:scroll;}
+
 
     </style>
 
@@ -62,6 +76,55 @@
         <div id="cell"></div>
         <div id="cell"></div>
     </div>
+    <div id="sidebar">
+        
+        <nav>
+            <ul>
+                <li>Link 1</li>
+                <li>Link 2</li>
+                <li>Link 3</li>
+                <li>Link 4</li>
+                <li>Link 5</li>
+                <li>Link 6</li> 
+                <li>Link 7</li> 
+                <li>Link 8</li>
+                <li>Link 9</li>
+                <li>Link 10</li>
+                <li>Link 11</li>
+                <li>Link 13</li>
+                <li>Link 13</li>
+                <li>Link 1</li>
+                <li>Link 2</li>
+                <li>Link 3</li>
+                <li>Link 4</li>
+                <li>Link 5</li>
+                <li>Link 6</li> 
+                <li>Link 7</li> 
+                <li>Link 8</li>
+                <li>Link 9</li>
+                <li>Link 10</li>
+                <li>Link 11</li>
+                <li>Link 13</li>
+                <li>Link 13</li>
+                <li>Link 1</li>
+                <li>Link 2</li>
+                <li>Link 3</li>
+                <li>Link 4</li>
+                <li>Link 5</li>
+                <li>Link 6</li> 
+                <li>Link 7</li> 
+                <li>Link 8</li>
+                <li>Link 9</li>
+                <li>Link 10</li>
+                <li>Link 11</li>
+                <li>Link 13</li>
+                <li>Link 13</li>
+
+            </ul>
+        </nav>
+
+    </div>
 
 </body>
+
 </html>

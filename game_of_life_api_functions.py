@@ -10,7 +10,8 @@ def insert_blueprint(blueprint_input, blueprint_name):
     for coordinate in split_input:
         formatted_coordinate = coordinate.split("_")
         print(formatted_coordinate)
-        blueprint.append(formatted_coordinate)
+        integer_coordinate = [int(formatted_coordinate[0]), int(formatted_coordinate[1])]
+        blueprint.append(integer_coordinate)
 
     with open('game_of_life/game_of_life_database.json') as json_file:
         database = json.load(json_file)
@@ -37,8 +38,6 @@ def blueprint_name_exists(blueprint_name):
     
     return False
 
-#insert_blueprint("5_5&3_3&9_0", "mom")
+insert_blueprint("5_5&3_3&9_0", "adsa")
 #print(blueprint_name_exists("3"))
 
-a = retrieve_blueprints()
-print(a)
