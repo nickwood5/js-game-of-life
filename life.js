@@ -9,6 +9,8 @@ const xSize = 50
 const ySize = 50
 
 const gameBoard = document.getElementById('game-board')
+const blueprintsBar = document.getElementById('list')
+var blueprints
 gameBoard.onmouseleave = (function() {mouseLeave()})
 
 function mouseLeave() {
@@ -195,6 +197,48 @@ function update(array, row, col) {
     }
 }
 
+function clearBoard() {
+    for (let row = 1; row < ySize + 1; row++) {
+        for (let col = 1; col < xSize + 1; col++) { 
+            if (currentBoard[col][row] == 1) {
+                setDead(row, col)
+            } 
+        }
+    }
+}
+
+function loadBlueprint(name) {
+    console.log("Load " + name)
+    console.log(blueprints)
+    var aliveCoordinates = blueprints[name]
+    console.log(aliveCoordinates)
+    clearBoard()
+    for (let i = 0; i < aliveCoordinates.length; i++) {
+        setAlive(aliveCoordinates[i][1], aliveCoordinates[i][0])
+    }
+}
+
+async function loadBlueprints() {
+    await getJSON("http://nickwood5.pythonanywhere.com/retrieve").then((response) => {
+        console.log(response)
+        blueprints = response
+    });
+    console.log(blueprints)
+    var blueprintNames = Object.keys(blueprints)
+    console.log(blueprintNames)
+    for (let i = 0; i < blueprintNames.length; i++) {
+        console.log(blueprintNames[i])
+        var listItem = document.createElement('li')
+        var blueprintName = document.createTextNode(blueprintNames[i])
+        listItem.appendChild(blueprintName)
+        listItem.onmousedown = (function() {loadBlueprint(blueprintNames[i])})
+
+        blueprintsBar.appendChild(listItem)
+    }
+
+}
+
+loadBlueprints()
 
 function step(currentBoard) {
     let clonedArray = currentBoard.map(a => {return {...a}})
@@ -242,9 +286,13 @@ function formatBlueprintInput() {
     return blueprintInput.slice(0, -1)
 }
 
-function saveBlueprint(name) {
+function saveBlueprint() {
+    var blueprintName = document.getElementById("blueprintName").value
+    if (blueprintName == "") {
+        return
+    }
     var blueprintInput = formatBlueprintInput()
-    var url = "http://nickwood5.pythonanywhere.com/gameoflife/insert/" + name + blueprintInput
+    var url = "http://nickwood5.pythonanywhere.com/gameoflife/insert/" + blueprintName + blueprintInput
     console.log(url)
 
     getJSON(url).then((value) => {
@@ -263,16 +311,6 @@ async function getJSON(url) {
 }
 
 async function run() {
-    var c
-    await getJSON("http://nickwood5.pythonanywhere.com/retrieve").then((value) => {
-        console.log(value)
-        c = value
-        //let c = value
-        // expected output: "Success!"
-      });
-    console.log(c)
-    saveBlueprint("nic")
-
 
     while (1) {
         //console.log(c)
