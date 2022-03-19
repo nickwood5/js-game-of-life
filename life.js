@@ -3,13 +3,24 @@ var nextBoard = []
 var mousePressed = false
 var removeCells = false
 var simulationRunning = false
+var simulationStarted = false
 var stopSimulation = false
+var loadedBlueprints = []
+var savedBoard = []
 
 const xSize = 50
 const ySize = 50
 
 const gameBoard = document.getElementById('game-board')
 const blueprintsBar = document.getElementById('list')
+const simulationControl = document.getElementById('controlsim')
+const restartControl = document.getElementById('restart')
+const blueprintNameBox = document.getElementById('blueprintName')
+const errorMessage = document.getElementById('errorMessage')
+const resetMessage = document.getElementById('resetMessage')
+const startMessage = document.getElementById('startMessage')
+
+
 var blueprints
 gameBoard.onmouseleave = (function() {mouseLeave()})
 
@@ -32,7 +43,7 @@ initBoard(currentBoard)
 initBoard(nextBoard)
 
 function setAlive(row, column) {
-    console.log("Set alive cell at " + row + ", " + column)
+    //console.log("Set alive cell at " + row + ", " + column)
     const cell = document.createElement('div')
     cell.style.gridRowStart = row
     cell.style.gridColumnStart = column
@@ -58,7 +69,7 @@ function setAliveNotClickable(row, column) {
 function initSimulation() {
     for (let col = 1; col < ySize + 1; col++) {
         for (let row = 1; row < ySize + 1; row++) {
-            let id = "toggle" + row + col
+            let id = "toggle" + row + "," + col
             let cell = document.getElementById(id)
             cell.remove()
             if (currentBoard[col][row] == 1) {
@@ -88,7 +99,7 @@ function initDead(row, column) {
     cell.onmouseover = (function() {mouseOver(row, column)})
     cell.onmouseup = (function() {mouseUp(row, column)})
     gameBoard.appendChild(cell)
-    cell.id = "toggle" + row + column
+    cell.id = "toggle" + row + "," + column
     currentBoard[column][row] = 0
 }
 
@@ -118,32 +129,126 @@ function mouseOver(row, column) {
     }
 }
 
+function initializeUserBoard() {
+    for (let col = 1; col < ySize + 1; col++) {
+        for (let row = 1; row < ySize + 1; row++) {
+            initDead(row, col)
+        }
+    }
+}
+initializeUserBoard() 
 
-for (let col = 1; col < ySize + 1; col++) {
-    for (let row = 1; row < ySize + 1; row++) {
-        initDead(row, col)
+
+function controlSimulation() {
+    if (!simulationStarted) {
+        startSimulation()
+    } else if (simulationRunning) {
+        pauseSimulation()
+        simulationControl.textContent = "Unpause"
+    } else if (!simulationRunning) {
+        unpauseSimulation()
+        simulationControl.textContent = "Pause"
+    }
+}
+
+async function resetSimulation(loadSaved) {
+    if (simulationStarted) {
+        setStop()
+        await sleep(100)
+
+        for (let col = 1; col < ySize + 1; col++) {
+            for (let row = 1; row < ySize + 1; row++) {
+                if (currentBoard[col][row] == 1) {
+                    let id = row + "," + col
+                    let cell = document.getElementById(id)
+                    cell.remove()
+                    currentBoard[col][row] = 0
+                } 
+            }
+        }
+        simulationRunning = false
+        simulationStarted = false
+        
+        simulationControl.textContent = "Start"
+        restartControl.textContent = "Clear Grid"
+        initializeUserBoard()
+        if (loadSaved) {
+            loadSavedBoard()
+        }
+
+    } else {
+        resetMessage.textContent = "Board cleared."
+        clearBoard()
+    }
+} 
+
+function loadSavedBoard() {
+    for (let col = 1; col < ySize + 1; col++) {
+        for (let row = 1; row < ySize + 1; row++) {
+            if (savedBoard[col][row] == 1) {
+                setAlive(row, col)
+            } 
+        }
     }
 }
 
 
+function startSimulation() {
+
+    if (getNumCells() == 0) {
+        startMessage.textContent = "Grid is empty."
+        return
+    }
+    simulationControl.textContent = "Pause"
+    startMessage.textContent = ""
+
+    stopSimulation = false
+    savedBoard = []
+    savedBoard = currentBoard.map(a => {return {...a}})
+    restartControl.textContent = "Restart"
+    console.log("Start running simulation")
+    resetMessage.textContent = ""
+    initSimulation()
+    simulationRunning = true
+    simulationStarted = true
+    run()
+}
+
+function getNumCells() {
+    var sum = 0
+    for (let col = 1; col < ySize + 1; col++) {
+        for (let row = 1; row < ySize + 1; row++) {
+            sum += currentBoard[col][row]
+        }
+    }
+    return sum
+}
+
+function setStop() {
+    stopSimulation = true
+    simulationRunning = false
+}
+
+function pauseSimulation() {
+    console.log("Pause")
+    stopSimulation = true
+    simulationRunning = false
+}
+
+function unpauseSimulation() {
+    console.log("Unpause")
+    simulationRunning = true
+    stopSimulation = false
+    run()     
+}
+
 window.addEventListener('keydown', press => {
     if (press.code == 'Space' && !simulationRunning) {
-        console.log("Start running simulation")
-        initSimulation()
-        simulationRunning = true
-        run()
-    } else if (press.code == 'KeyR' && simulationRunning) {
-        console.log("Restart")
-        stopSimulation = true
+        startSimulation()
     } else if (press.code == 'KeyP' && simulationRunning) {
-        console.log("Pause")
-        stopSimulation = true
-        simulationRunning = false
+        pauseSimulation() 
     } else if (press.code == 'KeyP' && !simulationRunning) {
-        console.log("Unpause")
-        simulationRunning = true
-        stopSimulation = false
-        run()        
+        unpauseSimulation()      
     }
 })
 
@@ -207,11 +312,14 @@ function clearBoard() {
     }
 }
 
-function loadBlueprint(name) {
+
+blueprintNameBox
+async function loadBlueprint(name) {
     console.log("Load " + name)
     console.log(blueprints)
     var aliveCoordinates = blueprints[name]
     console.log(aliveCoordinates)
+    await resetSimulation(false)
     clearBoard()
     for (let i = 0; i < aliveCoordinates.length; i++) {
         setAlive(aliveCoordinates[i][1], aliveCoordinates[i][0])
@@ -227,13 +335,16 @@ async function loadBlueprints() {
     var blueprintNames = Object.keys(blueprints)
     console.log(blueprintNames)
     for (let i = 0; i < blueprintNames.length; i++) {
-        console.log(blueprintNames[i])
-        var listItem = document.createElement('li')
-        var blueprintName = document.createTextNode(blueprintNames[i])
-        listItem.appendChild(blueprintName)
-        listItem.onmousedown = (function() {loadBlueprint(blueprintNames[i])})
+        if (!loadedBlueprints.includes(blueprintNames[i])) {
+            console.log(blueprintNames[i])
+            var listItem = document.createElement('li')
+            var blueprintName = document.createTextNode(blueprintNames[i])
+            listItem.appendChild(blueprintName)
+            listItem.onmousedown = (function() {loadBlueprint(blueprintNames[i])})
 
-        blueprintsBar.appendChild(listItem)
+            blueprintsBar.appendChild(listItem)
+            loadedBlueprints.push(blueprintNames[i])
+        }
     }
 
 }
@@ -286,18 +397,28 @@ function formatBlueprintInput() {
     return blueprintInput.slice(0, -1)
 }
 
-function saveBlueprint() {
+async function saveBlueprint() {
     var blueprintName = document.getElementById("blueprintName").value
     if (blueprintName == "") {
+        errorMessage.textContent = "Name your design."
         return
     }
+
+    if (loadedBlueprints.includes(blueprintName)) {
+        errorMessage.textContent = "Design name already exists."
+        return
+    }
+
+    errorMessage.textContent = "Design saved!"
     var blueprintInput = formatBlueprintInput()
     var url = "http://nickwood5.pythonanywhere.com/gameoflife/insert/" + blueprintName + blueprintInput
     console.log(url)
 
-    getJSON(url).then((value) => {
-        console.log(value)
+    await getJSON(url).then((result) => {
+        console.log(result)
     });
+    //await sleep(100)
+    loadBlueprints()
 }
 
 function sleep(ms) {
