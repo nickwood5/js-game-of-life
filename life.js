@@ -209,11 +209,27 @@ async function resetSimulation(loadSaved) {
             loadSavedBoard()
         }
 
+    } else if (getNumCells() == 0) {
+        console.log("Generate random")
+        generateRandom()
+        restartControl.innerHTML = "<span> Clear </span>"
     } else {
         //resetMessage.textContent = "Board cleared."
         clearBoard()
+        restartControl.innerHTML = "<span> Random </span>"
     }
 } 
+
+function generateRandom() {
+    for (let row = 1; row < ySize + 1; row++) {
+        for (let col = 1; col < xSize + 1; col++) { 
+            let alive = Math.floor(Math.random()*2)
+            if (alive) {
+                setAlive(row, col)
+            }
+        }
+    }
+}
 
 function loadSavedBoard() {
     for (let col = 1; col < ySize + 1; col++) {
