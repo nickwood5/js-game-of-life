@@ -7,6 +7,7 @@ var simulationStarted = false
 var stopSimulation = false
 var loadedBlueprints = []
 var savedBoard = []
+var highlightedCells = []
 
 const xSize = 50
 const ySize = 50
@@ -20,9 +21,9 @@ const errorMessage = document.getElementById('errorMessage')
 const resetMessage = document.getElementById('resetMessage')
 const startMessage = document.getElementById('startMessage')
 
-
-var blueprints
 gameBoard.onmouseleave = (function() {mouseLeave()})
+var blueprints
+
 
 function mouseLeave() {
     console.log("Mouse has left the board")
@@ -51,7 +52,7 @@ function setAlive(row, column) {
     cell.onmouseover = (function() {mouseOver(row, column)})
     cell.onmouseup = (function() {mouseUp(row, column)})
     cell.id = row + "," + column
-    cell.classList.add('cell')
+    cell.classList.add('blueprintCell')
     gameBoard.appendChild(cell)
     currentBoard[column][row] = 1
 }
@@ -61,7 +62,7 @@ function setAliveNotClickable(row, column) {
     cell.style.gridRowStart = row
     cell.style.gridColumnStart = column
     cell.id = row + "," + column
-    cell.classList.add('cell')
+    cell.classList.add('activeCell')
     gameBoard.appendChild(cell)
     currentBoard[column][row] = 1
 }
@@ -93,6 +94,7 @@ function setDead(row, column) {
 function initDead(row, column) {
     //console.log("Init new dead cell at " + row + ", " + column)
     const cell = document.createElement('div')
+    cell.classList.add('blueprintEmpty')
     cell.style.gridRowStart = row
     cell.style.gridColumnStart = column
     cell.onmousedown = (function() {mouseDown(row, column)})
@@ -120,6 +122,8 @@ function mouseUp(row, column) {
 }
 
 function mouseOver(row, column) {
+    //indicateSelection(row, column)
+    console.log(row + ", " + column)
     if (mousePressed) {
         if (removeCells && currentBoard[column][row] == 1) {
             setDead(row, column)
@@ -127,6 +131,35 @@ function mouseOver(row, column) {
             setAlive(row, column)
         }
     }
+}
+
+function dddd(row, column) {
+    let id = "s" + row + "," + column
+    let cell = document.getElementById(id)
+    cell.remove()
+}
+
+
+function indicateSelection(row, column) {
+    for (let i = 0; i < highlightedCells.length; i++) {
+        let cell = document.getElementById(highlightedCells[i])
+        console.log("Remove" + highlightedCells[i])
+        cell.remove()
+    }
+    highlightedCells = []
+    console.log(highlightedCells)
+    highlightedCells.push("s" + row + "," + column)
+    const cell = document.createElement('div')
+    cell.onmousedown = (function() {mouseDown(row, column)})
+    
+    cell.style.gridRowStart = row
+    cell.style.gridColumnStart = column
+    cell.id = "s" + row + "," + column
+    cell.classList.add('select')
+    //cell.onmouseout = (function() {mouseLeave(row, column)})
+    gameBoard.append(cell) 
+
+    
 }
 
 function initializeUserBoard() {
@@ -144,7 +177,7 @@ function controlSimulation() {
         startSimulation()
     } else if (simulationRunning) {
         pauseSimulation()
-        simulationControl.textContent = "Unpause"
+        simulationControl.innerHTML = "<span> Unpause </span>"
     } else if (!simulationRunning) {
         unpauseSimulation()
         simulationControl.textContent = "Pause"
@@ -169,15 +202,15 @@ async function resetSimulation(loadSaved) {
         simulationRunning = false
         simulationStarted = false
         
-        simulationControl.textContent = "Start"
-        restartControl.textContent = "Clear Grid"
+        simulationControl.innerHTML = "<span> Start </span>"
+        restartControl.innerHTML = "<span> Clear </span>"
         initializeUserBoard()
         if (loadSaved) {
             loadSavedBoard()
         }
 
     } else {
-        resetMessage.textContent = "Board cleared."
+        //resetMessage.textContent = "Board cleared."
         clearBoard()
     }
 } 
@@ -196,18 +229,18 @@ function loadSavedBoard() {
 function startSimulation() {
 
     if (getNumCells() == 0) {
-        startMessage.textContent = "Grid is empty."
+    //    startMessage.textContent = "Grid is empty."
         return
     }
-    simulationControl.textContent = "Pause"
-    startMessage.textContent = ""
+    simulationControl.innerHTML = "<span> Pause </span>"
+    //startMessage.textContent = ""
 
     stopSimulation = false
     savedBoard = []
     savedBoard = currentBoard.map(a => {return {...a}})
-    restartControl.textContent = "Restart"
+    restartControl.innerHTML = "<span> Restart </span>"
     console.log("Start running simulation")
-    resetMessage.textContent = ""
+    //resetMessage.textContent = ""
     initSimulation()
     simulationRunning = true
     simulationStarted = true
@@ -242,7 +275,7 @@ function unpauseSimulation() {
     run()     
 }
 
-window.addEventListener('keydown', press => {
+/*window.addEventListener('keydown', press => {
     if (press.code == 'Space' && !simulationRunning) {
         startSimulation()
     } else if (press.code == 'KeyP' && simulationRunning) {
@@ -250,7 +283,7 @@ window.addEventListener('keydown', press => {
     } else if (press.code == 'KeyP' && !simulationRunning) {
         unpauseSimulation()      
     }
-})
+}*/
 
 function update(array, row, col) {
     //console.log("THIS IS " + array[2][1])
@@ -280,9 +313,6 @@ function update(array, row, col) {
     if (array[x][y] == 1) numLive += 1
 
     let numDead = 8 - numLive
-    //console.log(numLive)
-    //console.log(numDead)
-
     if (array[col][row] == 1) {
         if (numLive == 2 || numLive == 3) {
             return 1
@@ -290,8 +320,6 @@ function update(array, row, col) {
             return 0
         }
     } else {
-        // Cell is currently dead
-        //console.log("Cell is currently DEAD with " + numLive + " neighbours")
         if (numLive == 3) {
             //console.log("Cell should spawn")
             return 1
@@ -341,6 +369,9 @@ async function loadBlueprints() {
             var blueprintName = document.createTextNode(blueprintNames[i])
             listItem.appendChild(blueprintName)
             listItem.onmousedown = (function() {loadBlueprint(blueprintNames[i])})
+            listItem.onmouseover = (function() {highlightText(blueprintNames[i])})
+            listItem.onmouseleave = (function() {unhighlightText(blueprintNames[i])})
+            listItem.id = "b_" + blueprintNames[i]
 
             blueprintsBar.appendChild(listItem)
             loadedBlueprints.push(blueprintNames[i])
@@ -348,6 +379,19 @@ async function loadBlueprints() {
     }
 
 }
+
+function highlightText(blueprintName) {
+    var id = "b_" + blueprintName
+    var a = document.getElementById(id)
+    a.style.color = "blue"
+}
+function unhighlightText(blueprintName) {
+    var id = "b_" + blueprintName
+    var a = document.getElementById(id)
+    a.style.color = "white"
+}
+
+
 
 loadBlueprints()
 
@@ -367,8 +411,6 @@ function printBoard(array, previousArray) {
             if (array[col][row] == 1) {
                 if (previousArray[col][row] == 0) {
                     setAliveNotClickable(row, col)
-                    //console.log('Drawing square')
-                    //array[row][col] = 1
                 }
                 //console.log("hi")
             } else {
@@ -399,13 +441,25 @@ function formatBlueprintInput() {
 
 async function saveBlueprint() {
     var blueprintName = document.getElementById("blueprintName").value
+
+    if (simulationStarted) {
+        errorMessage.textContent = "Simulation is running."
+        return
+    }
+
+
+    if (getNumCells() == 0) {
+        errorMessage.textContent = "Design is empty."
+        return
+    }
+    
     if (blueprintName == "") {
         errorMessage.textContent = "Name your design."
         return
     }
 
     if (loadedBlueprints.includes(blueprintName)) {
-        errorMessage.textContent = "Design name already exists."
+        errorMessage.textContent = "Design name exists."
         return
     }
 
@@ -434,12 +488,9 @@ async function getJSON(url) {
 async function run() {
 
     while (1) {
-        //console.log(c)
         await sleep(100)
-        //console.log("ss")
         clone = step(currentBoard)
         printBoard(currentBoard, clone)
-        //console.log(currentBoard)
         if (stopSimulation) {
             console.log("Stop")
             return
