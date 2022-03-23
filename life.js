@@ -20,6 +20,16 @@ const blueprintNameBox = document.getElementById('blueprintName')
 const errorMessage = document.getElementById('errorMessage')
 const resetMessage = document.getElementById('resetMessage')
 const startMessage = document.getElementById('startMessage')
+const saveButton = document.getElementById('savebutton')
+
+simulationControl.onmouseover = (function() {highlightText('controlsim')})
+simulationControl.onmouseleave = (function() {unhighlightText('controlsim')})
+
+restartControl.onmouseover = (function() {highlightText('restart')})
+restartControl.onmouseleave = (function() {unhighlightText('restart')})
+
+saveButton.onmouseover = (function() {highlightText('savebutton')})
+saveButton.onmouseleave = (function() {unhighlightText('savebutton')})
 
 gameBoard.onmouseleave = (function() {mouseLeave()})
 var blueprints
@@ -385,8 +395,8 @@ async function loadBlueprints() {
             var blueprintName = document.createTextNode(blueprintNames[i])
             listItem.appendChild(blueprintName)
             listItem.onmousedown = (function() {loadBlueprint(blueprintNames[i])})
-            listItem.onmouseover = (function() {highlightText(blueprintNames[i])})
-            listItem.onmouseleave = (function() {unhighlightText(blueprintNames[i])})
+            listItem.onmouseover = (function() {highlightText("b_" + blueprintNames[i])})
+            listItem.onmouseleave = (function() {unhighlightText("b_" + blueprintNames[i])})
             listItem.id = "b_" + blueprintNames[i]
 
             blueprintsBar.appendChild(listItem)
@@ -396,13 +406,12 @@ async function loadBlueprints() {
 
 }
 
-function highlightText(blueprintName) {
-    var id = "b_" + blueprintName
+function highlightText(id) {
     var a = document.getElementById(id)
-    a.style.color = "blue"
+    a.style.color = "yellow"
 }
-function unhighlightText(blueprintName) {
-    var id = "b_" + blueprintName
+
+function unhighlightText(id) {
     var a = document.getElementById(id)
     a.style.color = "white"
 }

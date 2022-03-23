@@ -43,7 +43,7 @@
             border: none;
             height: 5vh;
             width: 12vh;
-            transition: all 0.5s;
+            transition: all 0.2s;
         }
 
 
@@ -51,7 +51,7 @@
         cursor: pointer;
         display: inline-block;
         position: relative;
-        transition: 0.5s;
+        transition: 0.2s;
         }
 
         .button-two span:after {
@@ -60,7 +60,7 @@
         opacity: 0;
         top: 0;
         right: -20px;
-        transition: 0.5s;
+        transition: 0.2s;
         }
 
         .button-two:hover span {
@@ -168,7 +168,7 @@
         nav ul{overflow:hidden; overflow-y:scroll;}
         li {
             font-family: 'Montserrat', sans-serif;
-            color: rgb(199, 199, 199);
+            color: rgb(255, 255, 255);
             padding-left: 10px;
             font-size: 1.5vh;
         }
@@ -227,7 +227,7 @@
             <div class="breakpoint"></div>
             <input type="text" id="blueprintName">
             <div class="breakpoint"></div>
-            <button class="button-two" onclick="saveBlueprint()" id="restart"><span>Save</span></button>
+            <button class="button-two" onclick="saveBlueprint()" id="savebutton"><span>Save</span></button>
             
             <p class="errormessage" id = "errorMessage"></p>
         </div>
