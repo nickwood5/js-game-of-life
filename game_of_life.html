@@ -9,17 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100&family=Lato:wght@900&family=Montserrat:wght@800&display=swap" rel="stylesheet">
     
     <title>Game of Life</title>
+
     <style>
-        
-        
-
-        /* CSS */
-        .err { background: #ffe6ee; border: 1px solid #b1395f}; 
-
-
-        .header {
-            font-style: italic;
-        }
 
         .heading {
             font-family: 'Montserrat', sans-serif;
@@ -31,7 +22,6 @@
             height: 2vh;
         }
         
-        /*Button Two*/
         .button-two {
             font-weight: 300;
             color: #f2e6ff;
@@ -45,7 +35,6 @@
             width: 12vh;
             transition: all 0.2s;
         }
-
 
         .button-two span {
         cursor: pointer;
@@ -68,10 +57,9 @@
         }
 
         .button-two:hover span:after {
-        opacity: 1;
-        right: 0;
+            opacity: 1;
+            right: 0;
         }
-
 
         body {
             height: 100vh;
@@ -82,10 +70,12 @@
             margin: 0;
             background-color: black;
         }
+
         :root {
             --numRows: 50;
             --numCols: 50;
         }
+        
         #game-board {
             background-color: #222222;
             width: 80vmin;
@@ -111,16 +101,6 @@
 
         }
 
-        #leftsidebar {
-            background-color: rgb(87, 87, 87);
-            width: 20vmin;
-            height: 80vmin;
-            margin-top: 10vmin;
-            margin-bottom: 10vmin;
-            margin-left: auto;
-
-        }
-
         .text-center {
             text-align: center;
         }
@@ -141,10 +121,6 @@
         .activeCell {
             background-color: hsl(0, 0%, 100%);
         }
-
-        .select {
-            background-color: hsl(0, 0%, 55%);
-        }
         
         .tile {
             background-color: hsla(0, 0%, 100%, 0);
@@ -164,8 +140,10 @@
             list-style: none;
             padding: 0;
             margin: 0;
+            overflow:hidden; 
+            overflow-y:scroll;
         }
-        nav ul{overflow:hidden; overflow-y:scroll;}
+
         li {
             font-family: 'Montserrat', sans-serif;
             color: rgb(255, 255, 255);
@@ -187,23 +165,11 @@
 
     </style>
 
-
 <body style="background-color:#151515">
-    <script type="text/javascript" src="life.js" defer type="module">
+    <script type="text/javascript" src="life.js" defer type="module"></script>
 
-    </script>
-
-
-
-    <div id="game-board">
-        
-        <div id="cell"></div>
-        <div id="cell"></div>
-        <div id="cell"></div>
-    </div>
+    <div id="game-board"> </div>
     <div id="sidebar">
-        
-
         <div class="text-center">
             <div class="breakpoint"></div>
             <div class="breakpoint"></div>
@@ -212,13 +178,14 @@
             <button class="button-two" role="button" onclick="resetSimulation(true)" id="restart"><span>Random</span></button>
             <div class="breakpoint"></div>
             <div class="breakpoint"></div>
-
             <div class="heading">Load Design</div>
             <div class="breakpoint"></div>
         </div>
+
         <nav>
-        <ul id="list"></ul>
+            <ul id="list"></ul>
         </nav>
+        
         <div class="breakpoint"></div>
         <div class="breakpoint"></div>
         
@@ -227,14 +194,9 @@
             <div class="breakpoint"></div>
             <input type="text" id="blueprintName">
             <div class="breakpoint"></div>
-            <button class="button-two" onclick="saveBlueprint()" id="savebutton"><span>Save</span></button>
-            
+            <button class="button-two" onclick="saveBlueprint()" id="savebutton"><span>Save</span></button> 
             <p class="errormessage" id = "errorMessage"></p>
         </div>
-
-
     </div>
-
 </body>
-
 </html>

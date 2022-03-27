@@ -312,8 +312,6 @@ function unpauseSimulation() {
 }*/
 
 function update(array, row, col) {
-    //console.log("THIS IS " + array[2][1])
-    //console.log("Analyze tile at " + col + ", " + row)
     let numLive = 0
 
     let x = col - 1
@@ -452,7 +450,6 @@ function formatBlueprintInput() {
     for (let col = 1; col < ySize + 1; col++) {
         for (let row = 1; row < ySize + 1; row++) {
             if (currentBoard[col][row] == 1) {
-                //console.log("1 at " + col + ", " + row)
                 var coordinate = col + "_" + row + "&"
                 console.log(coordinate)
                 blueprintInput += coordinate
@@ -491,12 +488,9 @@ async function saveBlueprint() {
     errorMessage.textContent = "Design saved!"
     var blueprintInput = formatBlueprintInput()
     var url = "http://nickwood5.pythonanywhere.com/gameoflife/insert/" + blueprintName + blueprintInput
-    console.log(url)
 
-    await getJSON(url).then((result) => {
-        console.log(result)
-    });
-    //await sleep(100)
+    await getJSON(url)
+
     loadBlueprints()
 }
 

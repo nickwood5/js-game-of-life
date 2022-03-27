@@ -36,7 +36,6 @@ class retrieveBlueprints(Resource):
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
-
 api.add_resource(HelloWorld, "/helloworld/<string:name>/<int:test>")
 api.add_resource(insertBlueprint, "/test/<string:blueprint_name>/<string:blueprint_input>")
 api.add_resource(retrieveBlueprints, "/retrieve")
